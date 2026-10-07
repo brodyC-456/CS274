@@ -88,13 +88,35 @@ void rotate_data(char data[], int data_size, int rot){
     }
 }
 
+// Performs a rotation based solely on frequencies
+void rotate_freqs(float freqs[], int rot){
+    for(int i = 0; i < ALPHA_LENGTH; i++){
+        freqs[i] = freqs[(i + rot) % ALPHA_LENGTH]
+    }
+}
+
+// Returns the index of a character in the alphabet
+int get_char_index(char c){
+    return c - 'A';
+}
+
 /**
  * Get the letter frequencies for file data.
  */
 void get_freqs(char data[], int data_size, float freqs[])
 {
-    // TODO
-    for(int i = 0; i < dat)
+
+    // Add one to each frequency when we come accross the letter
+    for(int i = 0; i < data_size; i++){
+        if(isalpha(data[i])){
+            freqs[get_char_index(data[i])] += 1;
+        }
+    }
+
+    // Divide each frequency by data length for fractional freq
+    for(int i = 0; i < ALPHA_LENGTH; i++){
+        freqs[i] /= data_size;
+    }
     
     
      
@@ -107,6 +129,10 @@ void get_freqs(char data[], int data_size, float freqs[])
 int find_rotation(float freqs[])
 {
     float smallest_chi_score = 1.0;
+
+    for(int i = 0; i < ALPHA_LENGTH; i++){
+        chi_score = 0;
+    }
 
 
 }
