@@ -45,8 +45,7 @@ float freqs_english[26] = {
  * Returns a pointer to the file data. This data should be freed with
  * `free()`. `size` is an out parameter that will hold the file size.
  */
-char *read_file(char *filename, int *size)
-{
+char *read_file(char *filename, int *size){
     struct stat sb;
     int total_size = 0;
 
@@ -80,43 +79,73 @@ char *read_file(char *filename, int *size)
     return data;
 }
 
-void rotate_data(char data[], int data_size, int rot){
-    for(int i = 0; i < data_size; i++){
-        if(isalpha(data[i])){
-            data[i] = (data[1] + rot) % ALPHA_LENGTH;
-        }
-    }
-}
+/* HELPERS */
 
-// Performs a rotation based solely on frequencies
-void rotate_freqs(float freqs[], int rot){
-    for(int i = 0; i < ALPHA_LENGTH; i++){
-        freqs[i] = freqs[(i + rot) % ALPHA_LENGTH]
-    }
-}
+/**
+ * Returns an alphabetic index for a character
+ */
 
-// Returns the index of a character in the alphabet
 int get_char_index(char c){
     return c - 'A';
 }
 
 /**
+ * Decrypts the data with the given rotation
+ */
+
+void rotate_data(char data[], int data_size, int rot){
+    for(int i = 0; i < data_size; i++){
+        if(isalpha(data[i])){
+            // Change the alphabetic index of the character
+            int char_index = (get_char_index(data[i]) + rot) % ALPHA_LENGTH;
+            // Revert it back to the char value
+            data[i] = char_index + 'A';
+        }
+    }
+}
+
+
+
+
+/**
+ * Performs a single rotation of the frequencies
+ * Called at the end of each rotation calculation in find_rotation
+ */
+
+void get_next_rotation(float freqs[]) {
+    // store the current freq of Z for later
+    float last = freqs[ALPHA_LENGTH - 1];
+    // rotate Z - B
+    for (int i = ALPHA_LENGTH - 1; i > 0; i--) {
+        freqs[i] = freqs[i - 1];
+    }
+    // store the prior frequency of Z in A
+    freqs[0] = last;
+}
+
+
+
+/**
  * Get the letter frequencies for file data.
  */
-void get_freqs(char data[], int data_size, float freqs[])
-{
+void get_freqs(char data[], int data_size, float freqs[]){
 
+    int num_alpha = 0;
     // Add one to each frequency when we come accross the letter
     for(int i = 0; i < data_size; i++){
         if(isalpha(data[i])){
-            freqs[get_char_index(data[i])] += 1;
+            freqs[get_char_index(data[i])] += 1.0;
+            num_alpha++;
         }
     }
 
     // Divide each frequency by data length for fractional freq
     for(int i = 0; i < ALPHA_LENGTH; i++){
-        freqs[i] /= data_size;
+        freqs[i] /= num_alpha;
+        // printf("freq of %c: %f\n", i + 'A', freqs[i]);
+
     }
+    
     
     
      
@@ -126,13 +155,32 @@ void get_freqs(char data[], int data_size, float freqs[])
  * Compare freqs to English freqs and figure out which shift gives us
  * the least error.
  */
-int find_rotation(float freqs[])
-{
-    float smallest_chi_score = 1.0;
+int find_rotation(float freqs[]){
+    float smallest_chi_score = 10000.0;
+    int best_rotation = 0;
 
+    // for each rotation, find the overall chi score
+    // If the chi score is the best we've seen so far, then record this as the best rotation
     for(int i = 0; i < ALPHA_LENGTH; i++){
-        chi_score = 0;
+        float chi_score = 0;
+        for(int j = 0; j < ALPHA_LENGTH; j++){
+            float observed = freqs[j];
+            float expected = freqs_english[j];
+            float diff = observed - expected;
+            chi_score += (diff * diff) / expected;
+            
+        }
+        // printf("rot %d: %f\n", i, chi_score);
+        if(chi_score < smallest_chi_score){
+            smallest_chi_score = chi_score;
+            best_rotation = i;
+        }
+        get_next_rotation(freqs);
     }
+
+    // return best rotation
+    // printf("%d\n", best_rotation);
+    return best_rotation;
 
 
 }
@@ -140,18 +188,16 @@ int find_rotation(float freqs[])
 /**
  * Decrypt the ciphertext and print to the screen.
  */
-void decrypt(char data[], int data_size, int rot)
-{
-    // TODO
+void decrypt(char data[], int data_size, int rot){
     rotate_data(data, data_size, rot);
-    printf("%c\n", data);
+    printf("%s\n", data);
 }
 
 /**
  * Main.
  */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
+
     if (argc != 2) {
         fprintf(stderr, "usage: caesar filename\n");
         return 1;
@@ -166,7 +212,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    float freqs[26];
+    float freqs[26] = {0};
 
     get_freqs(data, data_size, freqs);
     rot = find_rotation(freqs);
