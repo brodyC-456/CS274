@@ -21,7 +21,6 @@ int string_len(char *s)
  */
 char *string_chr(char *s, char c)
 {
-    // TODO
     while(*s != '\0'){
         if(*s == c){
             return s;
@@ -44,7 +43,7 @@ char *string_rchr(char *s, char c)
         s++;
         
     }
-    return last; // Fix me
+    return last;
 }
 
 /**
@@ -61,7 +60,7 @@ int string_chr_index(char *s, char c)
         s++;
         i++;
     }
-    return -1; // Fix me
+    return -1;
 }
 
 /**
