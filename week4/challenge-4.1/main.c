@@ -39,7 +39,7 @@ int main(){
 }
 
 
-// 3.14 is a float
+// 3.14 is a double
 // 12 is an int
 // The pointer types are all the same size because pointers are a fixed size
 
