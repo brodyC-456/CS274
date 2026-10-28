@@ -10,7 +10,7 @@ int usage(){
 }
 
 int is_operator(char *token){
-    if((*token == '+' | *token == '-' | *token == '*' | *token =='/') && strlen(token) == 1){
+    if((*token == '+' || *token == '-' || *token == '*' || *token =='/') && strlen(token) == 1){
         return 1;
     }
     else{
@@ -24,8 +24,8 @@ int main(int argc, char *argv[]){
     }
 
     struct stack *s = {
-        top = NULL;
-    }
+        .top = NULL
+    };
 
     for(int i = 0; i < argc - 1; i++){
         char *token = argv[i];
@@ -33,20 +33,20 @@ int main(int argc, char *argv[]){
             float f1 = pop(s);
             float f2 = pop(s);
             if(isnan(f1) || isnan(f2)){
-                printf("rpncalc: missing operand for '%c'\n", token)
+                printf("rpncalc: missing operand for '%c'\n", *token);
                 exit(1);
             }
 
-            if(token == '+'){
+            if(*token == '+'){
                 push(s, f1 + f2);
             }
-            if(token == '-'){
+            if(*token == '-'){
                 push(s, f1 - f2);
             }
-            if(token == '*'){
+            if(*token == '*'){
                 push(s, f1 * f2);
             }
-            if(token == '/'){
+            if(*token == '/'){
                 if(f2 == 0){
                     puts("rpncalc: devision by zero");
                     exit(1);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
             float f;
             char *badchar;
 
-            f = strtof(str, &badchar);
+            f = strtof(*token, &badchar);
 
             if (*badchar != '\0') {
                 printf("rpncalc: error: %c\n", *badchar); 

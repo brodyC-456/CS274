@@ -1,4 +1,4 @@
-#ifdef STACK_H
+#ifndef STACK_H
 #define STACK_H
 
 struct stack {
@@ -10,7 +10,7 @@ struct node {
     struct node *next;
 };
 
-void push(struct stack, float);
-float pop(struct stack);
+void push(struct stack *s, float value);
+float pop(struct stack *s);
 
 #endif
