@@ -3,7 +3,7 @@
 all: rpncalc
 
 rpncalc: rpncalc.o stack.o
-	gcc -o main $^
+	gcc -o rpncalc $^
 
 rpncalc.o: rpncalc.c
 	gcc -Wall -Wextra -c -o $@ $<

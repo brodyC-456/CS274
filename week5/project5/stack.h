@@ -12,5 +12,6 @@ struct node {
 
 void push(struct stack *s, float value);
 float pop(struct stack *s);
+void stack_print(struct stack *s);
 
 #endif

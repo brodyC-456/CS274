@@ -13,7 +13,6 @@ void push(struct stack *s, float value){
 float pop(struct stack *s){
     struct node *current_top = s->top;
     if(current_top == NULL){
-        puts("No Node in Stack!");
         return NAN;
     }
     struct node *next_top = current_top->next;
@@ -22,4 +21,15 @@ float pop(struct stack *s){
     free(current_top);
     s->top = next_top;
     return value;
+}
+
+void stack_print(struct stack *s)
+{
+    if (s->top == NULL)
+        printf("[empty]");
+    else
+        for (struct node *n = s->top; n != NULL; n = n->next)
+            printf("(%f)%s", n->value, n->next == NULL? "": " -> ");
+
+    putchar('\n');
 }
