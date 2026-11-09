@@ -3,13 +3,10 @@
 
 all: main
 
-main: main.o printcounter.o
+main: main.o
 	g++ -std=c++20 -Werror -Wextra -o $@ $^
 
-main.o: main.cpp
-	g++ -std=c++20 -Werror -Wextra -c $< -o $@
-
-printcounter.o: printcounter.cpp printcounter.h
+main.o: main.cpp stack.h
 	g++ -std=c++20 -Werror -Wextra -c $< -o $@
 
 clean:
