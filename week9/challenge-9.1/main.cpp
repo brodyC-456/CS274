@@ -25,4 +25,6 @@ int main(){
         animal->sound();
     }
 
+    // The objects were sliced in the first vector, so the unique behavior was removed!!! oh nooo!
+
 }
